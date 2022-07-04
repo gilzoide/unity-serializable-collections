@@ -1,0 +1,18 @@
+{
+    "name": "Gilzoide.SerializableCollections.Editor",
+    "rootNamespace": "Gilzoide.SerializableCollections.Editor",
+    "references": [
+        "GUID:9549a713daafdf78c901be4123d723ac"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,14 @@
+{
+    "name": "Gilzoide.SerializableCollections",
+    "rootNamespace": "Gilzoide.SerializableCollections",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
