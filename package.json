@@ -1,0 +1,11 @@
+{
+  "name": "com.gilzoide.serializable-collections",
+  "displayName": "Serializable Collections",
+  "description": "Serializable versions of Dictionary, HashSet and KeyValuePair for Unity",
+  "version": "1.0.0",
+  "unity": "2020.1",
+  "license": "Unlicense",
+  "author": {
+    "name": "Gil Reis"
+  }
+}
