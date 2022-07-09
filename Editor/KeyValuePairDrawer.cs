@@ -14,8 +14,8 @@ namespace Gilzoide.SerializableCollections.Editor
         {
             (SerializedProperty keyProperty, SerializedProperty valueProperty) = GetKeyValueProperties(property);
 
-            GUIContent keyLabel = keyProperty.hasVisibleChildren ? null : GUIContent.none;
-            GUIContent valueLabel = valueProperty.hasVisibleChildren ? null : GUIContent.none;
+            GUIContent keyLabel = ShouldHideLabel(keyProperty) ? GUIContent.none : null;
+            GUIContent valueLabel = ShouldHideLabel(valueProperty) ? GUIContent.none : null;
 
             if (IsPropertyInArray(property.propertyPath))
             {
@@ -107,6 +107,22 @@ namespace Gilzoide.SerializableCollections.Editor
                 throw new System.InvalidOperationException($"Expected type '{property.type}' to have 2 serialized fields!");
             }
             return (keyProperty, valueProperty);
+        }
+
+        static bool ShouldHideLabel(SerializedProperty property)
+        {
+            return !property.hasVisibleChildren
+                || property.propertyType == SerializedPropertyType.Vector2
+                || property.propertyType == SerializedPropertyType.Vector2Int
+                || property.propertyType == SerializedPropertyType.Vector3
+                || property.propertyType == SerializedPropertyType.Vector3Int
+                || property.propertyType == SerializedPropertyType.Quaternion
+                || property.propertyType == SerializedPropertyType.Rect
+                || property.propertyType == SerializedPropertyType.RectInt
+                || property.propertyType == SerializedPropertyType.Bounds
+                || property.propertyType == SerializedPropertyType.BoundsInt
+                || property.propertyType == SerializedPropertyType.Hash128
+                ;
         }
     }
 }
