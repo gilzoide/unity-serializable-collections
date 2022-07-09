@@ -9,17 +9,17 @@ namespace Gilzoide.SerializableCollections
         ISerializationCallbackReceiver,
         ISingleFieldDrawable
     {
-        [SerializeField] List<SerializableKeyValuePair<TKey, TValue>> Entries =
+        [SerializeField] List<SerializableKeyValuePair<TKey, TValue>> SerializedEntries =
             new List<SerializableKeyValuePair<TKey, TValue>>();
 
         public void OnAfterDeserialize()
         {
-            SerializationUtility.SyncEntriesToDict(Entries, this);
+            SerializationUtility.SyncEntriesToDict(SerializedEntries, this);
         }
 
         public void OnBeforeSerialize()
         {
-            SerializationUtility.SyncDictToEntries(this, Entries);
+            SerializationUtility.SyncDictToEntries(this, SerializedEntries);
         }
     }
 }
