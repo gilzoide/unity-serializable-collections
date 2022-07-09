@@ -12,8 +12,7 @@ namespace Gilzoide.SerializableCollections.Editor
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            SerializedProperty keyProperty = property.FindPropertyRelative("Key");
-            SerializedProperty valueProperty = property.FindPropertyRelative("Value");
+            (SerializedProperty keyProperty, SerializedProperty valueProperty) = GetKeyValueProperties(property);
 
             GUIContent keyLabel = keyProperty.hasVisibleChildren ? null : GUIContent.none;
             GUIContent valueLabel = valueProperty.hasVisibleChildren ? null : GUIContent.none;
@@ -27,20 +26,18 @@ namespace Gilzoide.SerializableCollections.Editor
                 Rect foldoutRect = new Rect(position.position, EditorStyles.foldout.CalcSize(label) + new Vector2(0, FOLDOUT_MARGIN));
                 if (property.isExpanded = EditorGUI.Foldout(foldoutRect, property.isExpanded, label, true))
                 {
-                    EditorGUI.indentLevel++;
-
-                    Rect drawRect = new Rect(position.x, foldoutRect.yMax, position.width, position.height - foldoutRect.height);
-                    DrawKeyValuePair(drawRect, keyProperty, valueProperty, keyLabel, valueLabel, DEFAULT_SEPARATOR);
-
-                    EditorGUI.indentLevel--;
+                    using (new EditorGUI.IndentLevelScope())
+                    {
+                        Rect drawRect = new Rect(position.x, foldoutRect.yMax, position.width, position.height - foldoutRect.height);
+                        DrawKeyValuePair(drawRect, keyProperty, valueProperty, keyLabel, valueLabel, DEFAULT_SEPARATOR);
+                    }
                 }
             }
         }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            SerializedProperty keyProperty = property.FindPropertyRelative("Key");
-            SerializedProperty valueProperty = property.FindPropertyRelative("Value");
+            (SerializedProperty keyProperty, SerializedProperty valueProperty) = GetKeyValueProperties(property);
 
             bool isInArray = IsPropertyInArray(property.propertyPath);
 
@@ -75,29 +72,41 @@ namespace Gilzoide.SerializableCollections.Editor
             Rect separatorRect = new Rect(keyRect.xMax + INDENT_MARGIN, position.y, separatorSize.x, separatorSize.y);
             Rect valueRect = new Rect(separatorRect.xMax, position.y, keyWidth + INDENT_MARGIN, position.height);
 
-            EditorGUI.PropertyField(keyRect, keyProperty, keyLabel, true);
-
-            if (!valueProperty.hasVisibleChildren)
+            using (new LabelWidth((keyWidth / 2f) + INDENT_MARGIN))
             {
-                using (AbsoluteIndentLevel(0))
+                // key
+                EditorGUI.PropertyField(keyRect, keyProperty, keyLabel, true);
+                // separator
+                using (new AbsoluteIndentLevel(0))
                 {
                     EditorGUI.LabelField(separatorRect, separatorLabel);
                 }
+                // value
+                using (new AbsoluteIndentLevel(1))
+                {
+                    EditorGUI.PropertyField(valueRect, valueProperty, valueLabel, true);
+                }
             }
-            using (AbsoluteIndentLevel(1))
-            {
-                EditorGUI.PropertyField(valueRect, valueProperty, valueLabel, true);
-            }
-        }
-
-        public static EditorGUI.IndentLevelScope AbsoluteIndentLevel(int indentLevel)
-        {
-            return new EditorGUI.IndentLevelScope(-EditorGUI.indentLevel + indentLevel);
         }
 
         public static bool IsPropertyInArray(string propertyPath)
         {
             return propertyPath.EndsWith("]");
+        }
+
+        static (SerializedProperty, SerializedProperty) GetKeyValueProperties(SerializedProperty property)
+        {
+            SerializedProperty keyProperty = property.Copy();
+            if (!keyProperty.NextVisible(true))
+            {
+                throw new System.InvalidOperationException($"Expected type '{property.type}' to have 2 serialized fields!");
+            }
+            SerializedProperty valueProperty = keyProperty.Copy();
+            if (!valueProperty.NextVisible(false))
+            {
+                throw new System.InvalidOperationException($"Expected type '{property.type}' to have 2 serialized fields!");
+            }
+            return (keyProperty, valueProperty);
         }
     }
 }
